@@ -2,7 +2,7 @@
 
 Domain-aware ASR data selection with pooled semantic, acoustic, and fused embeddings.
 
-This repository reproduces the 13,200-sample comparison between SBERT embeddings from ground-truth transcripts and Whisper large-v3 pseudolabels. It extracts pooled SBERT, WavLM, and MFA-Conformer vectors, projects them to 256 dimensions, builds explicit fusion matrices, trains MLP domain classifiers, and plots accuracy by embedding family.
+This repository reproduces the 13,200-sample comparison between SBERT embeddings from ground-truth transcripts vs Whisper large-v3 pseudolabels. It extracts SBERT, WavLM, and MFA-Conformer vectors, projects them to 256 dimensions, concatenates embeddings, trains MLP domain classifiers, and plots accuracy by embedding family.
 
 ## Setup
 
@@ -27,14 +27,6 @@ mkdir -p checkpoints
 # Download the checkpoint linked from:
 # https://github.com/ductuantruong/mfa_conformer_sv
 mv /path/to/downloaded.ckpt checkpoints/MFA_conformer.ckpt
-
-shasum -a 256 checkpoints/MFA_conformer.ckpt
-```
-
-Expected SHA-256:
-
-```text
-b40a1bdf78762808fc3f93069d95fc54b09740afe428e69b959b1652430485a2
 ```
 
 See [Environment and external artifacts](docs/environment.md) for the direct checkpoint download link and implementation note.
