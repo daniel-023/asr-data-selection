@@ -15,6 +15,30 @@ python -m pip install -e ".[dev]"
 
 Install `ffmpeg` separately so Whisper can load audio files.
 
+## MFA-Conformer Setup
+
+MFA-based extraction requires an external source checkout and pretrained checkpoint:
+
+```bash
+git clone https://github.com/zyzisyz/mfa_conformer mfa_conformer_repo
+git -C mfa_conformer_repo checkout 1b9c229948f8dbdbe9370937813ec75d4b06b097
+
+mkdir -p checkpoints
+# Download the checkpoint linked from:
+# https://github.com/ductuantruong/mfa_conformer_sv
+mv /path/to/downloaded.ckpt checkpoints/MFA_conformer.ckpt
+
+shasum -a 256 checkpoints/MFA_conformer.ckpt
+```
+
+Expected SHA-256:
+
+```text
+b40a1bdf78762808fc3f93069d95fc54b09740afe428e69b959b1652430485a2
+```
+
+See [Environment and external artifacts](docs/environment.md) for the direct checkpoint download link and implementation note.
+
 ## Run
 
 Run the complete experiment:
