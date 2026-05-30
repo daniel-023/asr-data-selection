@@ -1,0 +1,12 @@
+datasets
+joblib
+matplotlib
+numpy
+pandas
+scikit-learn
+scipy
+sentence-transformers
+soundfile
+torch
+torchaudio
+transformers

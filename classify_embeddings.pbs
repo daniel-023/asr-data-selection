@@ -1,0 +1,39 @@
+#!/bin/bash
+#PBS -N classify_embeddings
+#PBS -j oe
+#PBS -l select=1:ncpus=4:mem=32gb
+#PBS -l walltime=4:00:00
+# Submit with: qsub -P <project-code> classify_embeddings.pbs
+
+set -euo pipefail
+
+WORKDIR="${WORKDIR:-${HOME}/scratch/embedding_analysis}"
+OUT="${OUT:-${WORKDIR}/embeddings}"
+PYTHON="${PYTHON:-${HOME}/scratch/micromamba/envs/speech_lab/bin/python}"
+FEATURE_SETS="${FEATURE_SETS:-sbert_gt sbert_pseudo wavlm_256 mfa_conformer_256 wavlm_mfa sbert_gt_mfa sbert_pseudo_mfa sbert_gt_wavlm sbert_pseudo_wavlm sbert_gt_wavlm_mfa sbert_pseudo_wavlm_mfa}"
+MODELS="${MODELS:-mlp}"
+DEVICE="${DEVICE:-auto}"
+CNN_EPOCHS="${CNN_EPOCHS:-30}"
+CNN_BATCH_SIZE="${CNN_BATCH_SIZE:-64}"
+CNN_LR="${CNN_LR:-0.001}"
+
+cd "${WORKDIR}"
+
+if [[ ! -x "${PYTHON}" ]]; then
+  echo "Python is not executable: ${PYTHON}" >&2
+  exit 1
+fi
+
+export PATH="$(dirname "${PYTHON}"):${PATH}"
+
+read -r -a FEATURE_SET_ARGS <<< "${FEATURE_SETS}"
+read -r -a MODEL_ARGS <<< "${MODELS}"
+
+"${PYTHON}" classify_embeddings.py \
+  --out-root "${OUT}" \
+  --feature-sets "${FEATURE_SET_ARGS[@]}" \
+  --models "${MODEL_ARGS[@]}" \
+  --device "${DEVICE}" \
+  --cnn-epochs "${CNN_EPOCHS}" \
+  --cnn-batch-size "${CNN_BATCH_SIZE}" \
+  --cnn-lr "${CNN_LR}"

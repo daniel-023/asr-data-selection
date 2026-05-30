@@ -1,0 +1,46 @@
+#!/bin/bash
+#PBS -N generate_pseudolabels
+#PBS -j oe
+#PBS -l select=1:ncpus=4:mem=64gb:ngpus=1
+#PBS -l walltime=8:00:00
+# Submit with: qsub -P <project-code> generate_pseudolabels.pbs
+
+set -euo pipefail
+
+WORKDIR="${WORKDIR:-${HOME}/scratch/embedding_analysis}"
+MANIFEST="${MANIFEST:-${WORKDIR}/metadata/selected_manifest.json}"
+OUT_JSON="${OUT_JSON:-${WORKDIR}/metadata/selected_manifest.whisper_large_v3.json}"
+OUT_JSONL="${OUT_JSONL:-${WORKDIR}/metadata/selected_manifest.whisper_large_v3.jsonl}"
+CHECKPOINT_JSONL="${CHECKPOINT_JSONL:-${WORKDIR}/metadata/selected_manifest.whisper_large_v3.partial.jsonl}"
+PYTHON="${PYTHON:-${HOME}/scratch/micromamba/envs/speech_lab/bin/python}"
+WHISPER_MODEL="${WHISPER_MODEL:-openai/whisper-large-v3}"
+BATCH_SIZE="${BATCH_SIZE:-8}"
+CHUNK_LENGTH_S="${CHUNK_LENGTH_S:-30}"
+STRIDE_LENGTH_S="${STRIDE_LENGTH_S:-5}"
+DEVICE="${DEVICE:-cuda}"
+WHISPER_LANGUAGE="${WHISPER_LANGUAGE:-english}"
+TASK="${TASK:-transcribe}"
+
+cd "${WORKDIR}"
+
+module load ffmpeg/5.0.1
+
+if [[ ! -x "${PYTHON}" ]]; then
+  echo "Python is not executable: ${PYTHON}" >&2
+  exit 1
+fi
+
+export PATH="$(dirname "${PYTHON}"):${PATH}"
+
+"${PYTHON}" generate_pseudolabels.py \
+  --manifest "${MANIFEST}" \
+  --out-json "${OUT_JSON}" \
+  --out-jsonl "${OUT_JSONL}" \
+  --checkpoint-jsonl "${CHECKPOINT_JSONL}" \
+  --model-id "${WHISPER_MODEL}" \
+  --batch-size "${BATCH_SIZE}" \
+  --chunk-length-s "${CHUNK_LENGTH_S}" \
+  --stride-length-s "${STRIDE_LENGTH_S}" \
+  --device "${DEVICE}" \
+  --language "${WHISPER_LANGUAGE}" \
+  --task "${TASK}"
