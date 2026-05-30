@@ -23,7 +23,6 @@ __pycache__/
 *.jsonl
 
 # Local material that should not be published
-AGENTS.md
 /local_notes/
 
 # External source dependency; clone separately when MFA extraction is needed
