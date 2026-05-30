@@ -42,11 +42,25 @@ Place the checkpoint at:
 checkpoints/MFA_conformer.ckpt
 ```
 
+Download the pretrained checkpoint from the [MFA-Conformer speaker-verification fork](https://github.com/ductuantruong/mfa_conformer_sv):
+
+```text
+https://entuedu-my.sharepoint.com/:u:/g/personal/truongdu001_e_ntu_edu_sg/EfeIgwS89qpGpp8oZFyDuHcBQh2w0NwH2cABV6uKvMwLdA?e=kNNe2E
+```
+
 Expected SHA-256:
 
 ```text
 b40a1bdf78762808fc3f93069d95fc54b09740afe428e69b959b1652430485a2
 ```
+
+Verify the downloaded file:
+
+```bash
+shasum -a 256 checkpoints/MFA_conformer.ckpt
+```
+
+The checkpoint source includes speaker-verification inference code. This experiment uses the tested source revision above and extracts the 3,072-dimensional penultimate pooled representation before projecting it to 256 dimensions.
 
 ## Validated Local Versions
 
