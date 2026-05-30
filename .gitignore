@@ -1,15 +1,12 @@
 # Python environments and caches
 .venv/
-**/.venv/
 __pycache__/
-**/__pycache__/
 .pytest_cache/
 *.py[cod]
 *.egg-info/
 
 # macOS and editor-local files
 .DS_Store
-**/.DS_Store
 .vscode/
 *.code-workspace
 
