@@ -1,0 +1,8 @@
+sample_set,family,feature_set,display_name,accuracy,macro_f1,weighted_f1,feature_dim,sample_rows
+4000,Semantic,sbert_4000,Pure Semantic (SBERT),0.7396,0.7347,0.7347,256,4000
+4000,Acoustic,wavlm_4000,WavLM,0.9111,0.9106,0.9106,256,4000
+4000,Acoustic,mfa_4000,MFA,0.5821,0.5243,0.5243,256,4000
+4000,Acoustic,wavlm_mfa_4000,Pure Acoustic (WavLM + MFA),0.8061,0.8031,0.8031,512,4000
+4000,+MFA,sbert_mfa_4000,Semantic + MFA,0.725,0.717,0.717,512,4000
+4000,+WavLM,sbert_wavlm_4000,Semantic + WavLM,0.8996,0.8991,0.8991,512,4000
+4000,Full Fusion,sbert_wavlm_mfa_4000,Full Fusion (SBERT + WavLM + MFA),0.8339,0.8295,0.8295,768,4000

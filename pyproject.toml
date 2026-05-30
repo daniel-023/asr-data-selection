@@ -1,0 +1,33 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "asr-data-selection"
+version = "0.1.0"
+description = "Domain-aware ASR data selection with pooled semantic and acoustic embeddings."
+readme = "README.md"
+requires-python = ">=3.9"
+dependencies = [
+  "datasets",
+  "joblib",
+  "matplotlib",
+  "numpy",
+  "pandas",
+  "pyyaml",
+  "scikit-learn",
+  "sentence-transformers",
+  "soundfile",
+  "torch",
+  "torchaudio",
+  "transformers",
+]
+
+[project.optional-dependencies]
+dev = ["pytest"]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

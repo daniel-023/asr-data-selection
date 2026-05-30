@@ -1,44 +1,43 @@
 # ASR Data Selection
 
-Embedding-based analysis pipeline for domain-aware ASR data selection using semantic, acoustic, and fused speech representations.
+Domain-aware ASR data selection with pooled semantic, acoustic, and fused embeddings.
 
-## Report
-
-The current 13,200-sample embedding comparison, including the data split, Whisper pseudo-label generation, text normalization, embedding configurations, MLP settings, results, and report figures, is documented in:
-
-- [Embedding Comparison for Domain-Aware ASR Data Selection](docs/embedding_comparison_13200.md)
-
-## Primary Pipeline
-
-```text
-extract_subset.py
-generate_pseudolabels.py
-extract_embeddings.py
-extract_sbert_embeddings.py
-classify_embeddings.py
-plot_mlp_comparison.py
-```
-
-NSCC job files and running instructions are documented in [nscc_workflow.md](nscc_workflow.md).
+This repository reproduces the 13,200-sample comparison between SBERT embeddings from ground-truth transcripts and Whisper large-v3 pseudolabels. It extracts pooled SBERT, WavLM, and MFA-Conformer vectors, projects them to 256 dimensions, builds explicit fusion matrices, trains MLP domain classifiers, and plots accuracy by embedding family.
 
 ## Setup
-
-Create a virtual environment and install the Python dependencies:
 
 ```bash
 python3 -m venv .venv
 source .venv/bin/activate
 python -m pip install --upgrade pip
-python -m pip install -r requirements.txt
+python -m pip install -e ".[dev]"
 ```
 
-For local test execution, install `requirements-dev.txt` instead.
+Install `ffmpeg` separately so Whisper can load audio files.
 
-## External Artifacts
+## Run
 
-Audio, generated manifests containing sample-level metadata, embeddings, classifier outputs, virtual environments, and model checkpoints are intentionally excluded from version control.
+Run the complete experiment:
 
-MFA-Conformer extraction requires:
+```bash
+python scripts/run_experiment.py \
+  --config configs/embedding_comparison_13200.yaml
+```
 
-- a local `MFA_conformer.ckpt` checkpoint; and
-- the external [MFA-Conformer source repository](https://github.com/zyzisyz/mfa_conformer) checked out locally as `mfa_conformer_repo/`.
+Run selected dependent stages after subset generation:
+
+```bash
+python scripts/run_experiment.py \
+  --config configs/embedding_comparison_13200.yaml \
+  --stages pseudolabels embeddings classify plot
+```
+
+Every stage also has a thin script under `scripts/` for debugging or reruns. Use `--set dotted.key=value` to override a YAML setting without editing the committed config.
+
+## Documentation
+
+- [Reproduction guide](docs/reproduction.md)
+- [Environment and external artifacts](docs/environment.md)
+- [13,200-sample experiment report](docs/embedding_comparison_13200.md)
+
+Generated audio, manifests, embeddings, checkpoints, and classifier outputs are written under `artifacts/embedding_comparison_13200/` and excluded from version control. Compact plotting CSVs and report figures are committed under `docs/`.

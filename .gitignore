@@ -5,6 +5,7 @@ __pycache__/
 **/__pycache__/
 .pytest_cache/
 *.py[cod]
+*.egg-info/
 
 # macOS and editor-local files
 .DS_Store
@@ -12,12 +13,13 @@ __pycache__/
 .vscode/
 *.code-workspace
 
-# Generated data, embeddings, results, and model artifacts
-output/
-embeddings/
-results/
-checkpoints/
-ASR_finetune_data/
+# Generated experiment artifacts and model artifacts
+/artifacts/
+/output/
+/embeddings/
+/results/
+/checkpoints/
+/ASR_finetune_data/
 *.ckpt
 *.npy
 *.wav
@@ -25,17 +27,15 @@ ASR_finetune_data/
 *.jsonl
 *.zip
 
-# Legacy standalone classifier artifacts
-mlp_classifier/
-
-# Local notes and legacy experiment material
+# Legacy local material
+/mlp_classifier/
 AGENTS.md
 asr_finetune_transfer.md
 embedding_results_report.md
 prepare_asr_finetune_data.py
 
 # External source dependency; clone separately when MFA extraction is needed
-mfa_conformer_repo/
+/mfa_conformer_repo/
 
 # Local presentation artifacts
 *.pptx

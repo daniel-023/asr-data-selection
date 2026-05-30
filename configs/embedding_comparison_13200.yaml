@@ -1,0 +1,147 @@
+experiment:
+  name: embedding_comparison_13200
+  seed: 42
+
+artifacts:
+  root: artifacts/embedding_comparison_13200
+  audio_dir: audio
+  metadata_dir: metadata
+  embeddings_dir: embeddings
+  results_dir: results/classification
+  checkpoint_dir: checkpoints
+
+dataset:
+  reference_role: reference
+  candidate_role: candidate
+  train_role: reference
+  eval_role: candidate
+  reference_per_domain: 300
+  candidate_per_domain: 3000
+  min_words: 3
+  min_duration_sec: 3.0
+  shuffle_buffer_size: 10000
+  max_scan_factor: 200
+  selection_seed: 20260331
+  domains:
+    - domain: imda
+      hf_name: pengyizhou/nsc-imda-part6
+      reference_source_split: test
+      candidate_source_split: train
+      audio_column: audio
+      transcript_keys: [text]
+      id_column: id
+      duration_keys: [duration, duration_sec, audio_duration, length_seconds]
+      utt_prefix: im
+    - domain: gigaspeech
+      hf_name: pengyizhou/gigaspeech_subset_270h
+      reference_source_split: test
+      candidate_source_split: train
+      audio_column: audio
+      transcript_keys: [text]
+      id_column: id
+      duration_keys: [duration, duration_sec, audio_duration, length_seconds]
+      utt_prefix: gs
+    - domain: librispeech
+      hf_name: openslr/librispeech_asr
+      reference_source_split: test.clean
+      candidate_source_split: train.clean.100
+      audio_column: audio
+      transcript_keys: [text]
+      id_column: id
+      duration_keys: []
+      utt_prefix: ls
+    - domain: svarah
+      hf_name: ai4bharat/Svarah
+      reference_source_split: test
+      candidate_source_split: test
+      audio_column: audio
+      transcript_keys: [text, sentence, transcript]
+      id_column: id
+      duration_keys: [duration, duration_sec, audio_duration, length_seconds]
+      utt_prefix: sv
+
+pseudolabels:
+  model_id: openai/whisper-large-v3
+  language: english
+  task: transcribe
+  batch_size: 8
+  chunk_length_s: 30
+  stride_length_s: 5
+  device: auto
+  fallback_to_gt_on_empty: true
+
+embeddings:
+  device: auto
+  batch_size: 8
+  sbert_batch_size: 64
+  num_workers: 4
+  projection_dim: 256
+  projection_seed: 42
+  save_raw_embeddings: false
+  semantic_sources: [gt, pseudo]
+  encoders:
+    sbert:
+      model_id: all-mpnet-base-v2
+    wavlm:
+      model_id: microsoft/wavlm-base-plus
+      raw_dim: 768
+    mfa_conformer:
+      source_dir: mfa_conformer_repo
+      checkpoint: checkpoints/MFA_conformer.ckpt
+      raw_dim: 3072
+  fusion:
+    wavlm_mfa: [wavlm_256, mfa_conformer_256]
+    sbert_gt_mfa: [sbert_gt, mfa_conformer_256]
+    sbert_pseudo_mfa: [sbert_pseudo, mfa_conformer_256]
+    sbert_gt_wavlm: [sbert_gt, wavlm_256]
+    sbert_pseudo_wavlm: [sbert_pseudo, wavlm_256]
+    sbert_gt_wavlm_mfa: [sbert_gt, wavlm_256, mfa_conformer_256]
+    sbert_pseudo_wavlm_mfa: [sbert_pseudo, wavlm_256, mfa_conformer_256]
+
+classification:
+  feature_sets:
+    - sbert_gt
+    - sbert_pseudo
+    - wavlm_256
+    - mfa_conformer_256
+    - wavlm_mfa
+    - sbert_gt_mfa
+    - sbert_pseudo_mfa
+    - sbert_gt_wavlm
+    - sbert_pseudo_wavlm
+    - sbert_gt_wavlm_mfa
+    - sbert_pseudo_wavlm_mfa
+  hidden_dims: [256, 128]
+  dropout: 0.2
+  epochs: 30
+  batch_size: 64
+  learning_rate: 0.001
+  weight_decay: 0.0001
+  device: auto
+
+plot:
+  title: MLP Accuracy by Embedding Family (13,200-Sample Dataset)
+  y_min: 0.50
+  y_max: 0.94
+  groups:
+    - family: Semantic
+      features:
+        - [sbert_gt, GT]
+        - [sbert_pseudo, Pseudo]
+    - family: Acoustic
+      features:
+        - [wavlm_256, WavLM]
+        - [mfa_conformer_256, MFA]
+        - [wavlm_mfa, "WavLM+MFA"]
+    - family: "+MFA"
+      features:
+        - [sbert_gt_mfa, GT]
+        - [sbert_pseudo_mfa, Pseudo]
+    - family: "+WavLM"
+      features:
+        - [sbert_gt_wavlm, GT]
+        - [sbert_pseudo_wavlm, Pseudo]
+    - family: Full Fusion
+      features:
+        - [sbert_gt_wavlm_mfa, GT]
+        - [sbert_pseudo_wavlm_mfa, Pseudo]

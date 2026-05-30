@@ -83,13 +83,13 @@ pseudo_status
 pseudo_error
 ```
 
-One IMDA candidate utterance (`im_candidate_0822`) produced punctuation-only Whisper output. Its normalized pseudolabel was empty. To preserve the fixed 13,200-row subset, that row uses its ground-truth normalized transcript as a documented manual fallback:
+One IMDA candidate utterance (`im_candidate_0822`) produced punctuation-only Whisper output. Its normalized pseudolabel was empty. To preserve the fixed 13,200-row subset, the pipeline applies its configured ground-truth fallback automatically:
 
 ```text
 pseudo_status = manual_fallback_gt
 ```
 
-All other 13,199 rows use non-empty Whisper pseudolabels.
+The raw punctuation-only Whisper output is preserved in `pseudo_transcript`, and the fallback is recorded in `pseudo_error`. All other 13,199 rows use non-empty Whisper pseudolabels.
 
 ## Text Normalization
 
@@ -218,14 +218,11 @@ The current results show lower GigaSpeech recall than the other domains, indicat
 
 ## Reproducibility
 
-Primary pipeline scripts:
+Primary pipeline interface:
 
-```text
-extract_subset.py
-generate_pseudolabels.py
-extract_embeddings.py
-classify_embeddings.py
-plot_mlp_comparison.py
+```bash
+python scripts/run_experiment.py \
+  --config configs/embedding_comparison_13200.yaml
 ```
 
 Canonical report figures:
@@ -234,3 +231,12 @@ Canonical report figures:
 docs/figures/mlp_bar_accuracy_by_family_4000.png
 docs/figures/mlp_bar_accuracy_by_family_13200.png
 ```
+
+Compact plotting inputs:
+
+```text
+docs/results/mlp_bar_accuracy_by_family_4000.csv
+docs/results/mlp_bar_accuracy_by_family_13200.csv
+```
+
+See [reproduction.md](reproduction.md) for stage-level commands and [environment.md](environment.md) for external artifacts.
